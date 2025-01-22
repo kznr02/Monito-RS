@@ -1,3 +1,7 @@
+cargo-features = ["edition2024"]
+
 [workspace]
 members = [ "monito-cli", "monito-gui","monito-lib"]
 resolver = "3"
+
+[workspace.dependencies]
