@@ -6,3 +6,5 @@ edition = "2024"
 [dependencies]
 clap ={ version = "*", features = ["derive", "default"] }
 monito-lib ={ path = "../monito-lib" }
+log ={ workspace = true }
+env_logger ={ workspace = true }

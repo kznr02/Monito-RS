@@ -31,7 +31,7 @@ enum Commands {
 #[derive(Subcommand, Debug)]
 enum SetCommand {
     Brightness { value: u8 },
-    ColorTemp { value: u8 },
+    ColorTemp { value: u16 },
 }
 
 #[derive(Subcommand, Debug)]
@@ -42,33 +42,49 @@ enum GetCommand {
 
 fn main() {
     let args = CliArgs::parse();
+
+    env_logger::builder()
+        .default_format()
+        .format_file(true)
+        .format_line_number(true)
+        .init();
+
+    // 枚举显示器实例数组
     let mut monitors = enumerate_monitor();
 
     match args.command {
         Commands::Set { monitor, command } => match command {
             SetCommand::Brightness { value } => {
+                // 以指定的亮度设置与显示器编号设置显示器亮度，若无指定则统一调节所有显示器亮度
                 if let Some(index) = monitor {
-                    set_monitor_brightness(&mut monitors[index as usize], value as u32);
+                    monitors[index as usize].set_monitor_brightness(value as u32);
                 } else {
                     for m in monitors.iter_mut() {
-                        set_monitor_brightness(m, value as u32);
+                        m.set_monitor_brightness(value as u32);
                     }
                 }
             }
             SetCommand::ColorTemp { value } => {
-                todo!();
+                if let Some(index) = monitor {
+                    monitors[index as usize].set_monitor_temperature(value as u16);
+                } else {
+                    for m in monitors.iter_mut() {
+                        m.set_monitor_temperature(value as u16);
+                    }
+                }
             }
         },
         Commands::Get { monitor, command } => {
             let mut ret = 0;
             match command {
+                // 以指定的显示器编号获取显示器亮度，若无指定则统一获取所有显示器亮度
                 GetCommand::Brightness => {
                     if let Some(index) = monitor {
-                        ret = get_monitor_brightness(&mut monitors[index as usize]);
+                        ret = monitors[index as usize].get_monitor_brightness();
                         println!("Monitor {} Brightness: {}", index, ret);
                     } else {
                         for i in 0..monitors.len() {
-                            ret = get_monitor_brightness(&mut monitors[i]);
+                            ret = monitors[i].get_monitor_brightness();
                             println!("Monitor {} Brightness: {}", i, ret);
                         }
                     }
@@ -79,6 +95,7 @@ fn main() {
             }
         }
         Commands::List => {
+            // 打印所有在位的物理显示器
             println!("Monitors:");
             for i in 0..monitors.len() {
                 println!("Monitor {}: {}", i, monitors[i].name);
