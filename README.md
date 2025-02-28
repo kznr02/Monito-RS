@@ -11,10 +11,35 @@
 
 !!! Your monitor should support DDC/CI protocol. If you want to adjust RGB, you should enable RGB customization feature manually. !!!
 
-## Usage
+## CLI Usage
+
+### List All Presented Monitors
+
+`monito-rs list`
+
+### Get Monitor Parameter
+
+`monito-rs get {brightness|color}` Fetch all monitors
+
+`monito-rs get -m {id} {brightness|color}` Fetch Monitor{id}
+
+### Set Monitor Parameter
+
+`monitor-rs set {brightness|color} {value}` Set all monitors
+
+`monito-rs set -m {id} {brightness|color} {value}` Set monitor{id}
+
+## CLI Build Instruction
 
 - Pull the repo to your computer
 - into the repo dir
+- excute `cargo run --package monito-cli`
+- read the help instruction to use
+
+## GUI Build Instruction
+
+- Pull the repo to your computer
+- into the repo/monito-gui dir
 - excute `deno install`
 - Finally run `deno task tauri dev`
 

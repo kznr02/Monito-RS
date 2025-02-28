@@ -32,12 +32,14 @@ enum Commands {
 enum SetCommand {
     Brightness { value: u8 },
     ColorTemp { value: u16 },
+    Color { r: u8, g: u8, b: u8 },
 }
 
 #[derive(Subcommand, Debug)]
 enum GetCommand {
     Brightness,
     ColorTemp,
+    Color,
 }
 
 fn main() {
@@ -73,24 +75,47 @@ fn main() {
                     }
                 }
             }
+            SetCommand::Color { r, g, b } => {
+                if let Some(index) = monitor {
+                    monitors[index as usize].set_monitor_rgb(Color::Red, r);
+                    monitors[index as usize].set_monitor_rgb(Color::Green, g);
+                    monitors[index as usize].set_monitor_rgb(Color::Blue, b);
+                } else {
+                    for m in monitors.iter_mut() {
+                        m.set_monitor_rgb(Color::Red, r);
+                        m.set_monitor_rgb(Color::Green, g);
+                        m.set_monitor_rgb(Color::Blue, b);
+                    }
+                }
+            }
         },
         Commands::Get { monitor, command } => {
-            let mut ret = 0;
             match command {
                 // 以指定的显示器编号获取显示器亮度，若无指定则统一获取所有显示器亮度
                 GetCommand::Brightness => {
                     if let Some(index) = monitor {
-                        ret = monitors[index as usize].get_monitor_brightness();
-                        println!("Monitor {} Brightness: {}", index, ret);
+                        let ret = monitors[index as usize].get_monitor_brightness();
+                        println!("Monitor {} Brightness: {}", index, ret.current);
                     } else {
                         for i in 0..monitors.len() {
-                            ret = monitors[i].get_monitor_brightness();
-                            println!("Monitor {} Brightness: {}", i, ret);
+                            let ret = monitors[i].get_monitor_brightness();
+                            println!("Monitor {} Brightness: {}", i, ret.current);
                         }
                     }
                 }
                 GetCommand::ColorTemp => {
                     todo!();
+                }
+                GetCommand::Color => {
+                    if let Some(index) = monitor {
+                        let ret = monitors[index as usize].get_monitor_rgb();
+                        println!("Monitor {} RGB: R: {}, G: {}, B: {}", index, ret.r.current, ret.g.current, ret.b.current);
+                    } else {
+                        for i in 0..monitors.len() {
+                            let ret = monitors[i].get_monitor_rgb();
+                            println!("Monitor {} RGB: R: {}, G: {}, B: {}", i, ret.r.current, ret.g.current, ret.b.current);
+                        }
+                    }
                 }
             }
         }
