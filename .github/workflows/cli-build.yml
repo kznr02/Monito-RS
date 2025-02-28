@@ -1,0 +1,38 @@
+name: CLI Tool Build
+
+on:
+  push:
+    branches:
+      - main  # 可按需修改为主分支名称
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        target: [x86_64-pc-windows-msvc, i686-pc-windows-msvc]  # 64 位和 32 位目标平台
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+      
+      - name: Build CLI Tool
+        run: cargo build --release --package monito-cli --target ${{ matrix.target }}
+
+      - name: Package artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monito-cli-${{ matrix.target }}
+          path: |
+            target/${{ matrix.target }}/release/*.exe

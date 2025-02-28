@@ -25,9 +25,9 @@ trait InnerMonitorTrait {
 
 #[derive(Debug, Copy, Clone, Serialize)]
 pub struct Brightness {
-    current: u32,
-    min: u32,
-    max: u32,
+    pub current: u32,
+    pub min: u32,
+    pub max: u32,
 }
 
 impl Brightness {
@@ -48,9 +48,9 @@ struct Temperature {
 
 #[derive(Clone, Copy, Deserialize, Serialize)]
 pub struct ColorParam {
-    min: u32,
-    max: u32,
-    current: u32,
+    pub min: u32,
+    pub max: u32,
+    pub current: u32,
 }
 
 impl ColorParam {
@@ -65,9 +65,9 @@ impl ColorParam {
 
 #[derive(Clone, Copy, Deserialize, Serialize)]
 pub struct RGBParam {
-    r: ColorParam,
-    g: ColorParam,
-    b: ColorParam,
+    pub r: ColorParam,
+    pub g: ColorParam,
+    pub b: ColorParam,
 }
 
 impl RGBParam {
